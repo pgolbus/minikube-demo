@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: flask-default
+spec:
+  # only let pods labeled as flask-default access each other
+  podSelector:
+    matchLabels:
+      io.kompose.network/flask-default: "true"
+  # also let these pods be reachable from outside the network
+  ingress:
+  - from:
+      - podSelector:
+          matchLabels:
+            io.kompose.network/flask-default: "true"

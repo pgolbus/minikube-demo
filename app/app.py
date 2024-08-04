@@ -1,10 +1,7 @@
 from flask import Flask, request, jsonify
 import redis
-from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env file
-load_dotenv()
 
 app = Flask(__name__)
 
@@ -15,6 +12,8 @@ redis_client = redis.StrictRedis(
     db=int(os.getenv('REDIS_DB'))
 )
 
+
+@app.route('/', methods=['GET'])
 @app.route('/healthcheck', methods=['GET'])
 def health_check():
     """

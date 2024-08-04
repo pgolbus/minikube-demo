@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    # utility for turning docker-compose yamls into something that k8s can work w/
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    # Label used to identify services
+    io.kompose.service: python-app
+  name: python-app
+spec:
+  # our deploy will create a single replica set
+  replicas: 1
+  selector:
+    matchLabels:
+      # this allows other kube things to find the pods created by this deployment
+      io.kompose.service: python-app
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: python-app
+    spec:
+      containers:
+        - image: redis-flask-app:1.0.0
+          # ie this image is local
+          imagePullPolicy: Never
+          name: python-app
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - containerPort: 5000
+          resources: {}
+        - name: redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+      restartPolicy: Always
+status: {}
